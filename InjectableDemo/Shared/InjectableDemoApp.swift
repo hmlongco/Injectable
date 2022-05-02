@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import Injectable
 
 @main
 struct InjectableDemoApp: App {
     var body: some Scene {
+        let _ = sharedContainer.registerMocks()
         WindowGroup {
             ContentView()
         }

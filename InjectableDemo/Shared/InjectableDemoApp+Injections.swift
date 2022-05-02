@@ -9,5 +9,29 @@ import Foundation
 import Injectable
 
 extension Injections {
-    var myService: MyServiceType { shared( MyService() as MyServiceType ) }
+    var mySimpleService: MySimpleService { MySimpleService() }
+}
+
+extension Injections {
+    var myServiceType: MyServiceType { MyService() }
+    var mockServiceType: MyServiceType { MockService() }
+}
+
+extension Injections {
+    var mySingletonInstance: MySingleton { MySingleton.instance }
+    var mySingleton: MySingleton { application(MySingleton()) }
+    var myCachedService: MyService { cached(MyService()) }
+    var mySharedService: MyServiceType { shared(MyService() as MyServiceType) }
+}
+
+extension Injections {
+    var myConstructedService: MyConstructedService {
+        MyConstructedService(service: resolve(\.myServiceType))
+    }
+}
+
+extension Injections {
+    func registerMocks() {
+        register { MockService() as MyServiceType }
+    }
 }

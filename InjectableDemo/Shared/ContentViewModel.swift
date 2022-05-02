@@ -9,8 +9,11 @@ import Foundation
 import Injectable
 
 class ContentViewModel: ObservableObject {
-    @Injectable(\.myService) var service: MyServiceType
+
+    @Injectable(\.myConstructedService) var service
+
     @Published var text: String = ""
+    
     func load() {
         text = service.text()
     }
