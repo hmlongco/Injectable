@@ -16,7 +16,7 @@ The first issue can lead to a performance hit on application launch. That said, 
  
  Could I have my cake and eat it too?
  
- ## Injectable
+ ## Features
  
  Injectable is strongly influenced by SwiftUI, and in my opinion is highly suited for use in that environment. Injectable is...
  
@@ -28,7 +28,7 @@ The first issue can lead to a performance hit on application launch. That said, 
  
  Sound too good to be true? Let's take a look.
  
- ## An example
+ ## A simple example
  
  Most container-based dependency injection systems require you to define in some way that a given service type is injectable and many reqire some sort of factory or mechanism that will provide a new instance of the service when needed.
  
