@@ -29,7 +29,7 @@ import Foundation
 
 @propertyWrapper public struct LazyInjectable<Service> {
     private var container: Injections
-    private var keyPath: KeyPath<Injections, Service>?
+    private var keyPath: KeyPath<Injections, Service>
     private var service: Service!
     public init(_ keyPath: KeyPath<Injections, Service>) {
         self.container = sharedContainer
@@ -61,9 +61,7 @@ import Foundation
         guard service == nil else {
             return
         }
-        if let keyPath = keyPath {
-            self.service = container.resolve(keyPath)
-        }
+        self.service = container.resolve(keyPath)
     }
 }
 
@@ -79,6 +77,9 @@ public protocol Injections {
     func register<Service>(factory: @escaping () -> Service?)
     func resolve<Service>(_ keyPath: KeyPath<Injections, Service>) -> Service
     func optional<Service>(_ keyPath: KeyPath<Injections, Service>) -> Service?
+
+    // experimental functional resolution
+    func registered<Service>(_ factory:  @autoclosure () -> Service) -> Service
 
     // scopes
     var application: InjectableScope { get }
@@ -110,6 +111,17 @@ public class InjectableContainer: Injections {
         registrations[id] = factory
     }
 
+    /// Returns a registered service of that type or calls the factory to create a new instance of that type.
+    ///
+    /// - Parameter keyPath: Keypath of the service to resolve
+    /// - Returns the requested service from the keypath or from a registration override.
+    public func registered<Service>(_ factory:  @autoclosure () -> Service) -> Service {
+        defer { lock.unlock() }
+        lock.lock()
+        let id = Int(bitPattern: ObjectIdentifier(Service.self))
+        return registrations[id]?() as? Service ?? factory()
+    }
+
     // resolution
 
     /// Resolves a service based on the keypath provided. Since the keypath must exist and since the types must match, this function is
@@ -120,7 +132,8 @@ public class InjectableContainer: Injections {
     public func resolve<Service>(_ keyPath: KeyPath<Injections, Service>) -> Service {
         defer { lock.unlock() }
         lock.lock()
-        return registered() ?? self[keyPath: keyPath]
+        let id = Int(bitPattern: ObjectIdentifier(Service.self))
+        return registrations[id]?() as? Service ?? self[keyPath: keyPath]
     }
 
     /// Resolves a service based on the keypath provided. Since the keypath must exist and since the types must match, this function is
@@ -134,7 +147,8 @@ public class InjectableContainer: Injections {
     public func optional<Service>(_ keyPath: KeyPath<Injections, Service>) -> Service? {
         defer { lock.unlock() }
         lock.lock()
-        return registered() ?? self[keyPath: keyPath]
+        let id = Int(bitPattern: ObjectIdentifier(Service.self))
+        return registrations[id]?() as? Service ?? self[keyPath: keyPath]
     }
 
     /// singleton scope where services exist for lifetime of the app
@@ -153,11 +167,6 @@ public class InjectableContainer: Injections {
     }
 
     // private
-
-    private func registered<Service>() -> Service? {
-        let id = Int(bitPattern: ObjectIdentifier(Service.self))
-        return registrations[id]?() as? Service
-    }
 
     private var registrations: [Int:() -> Any] = [:]
     private var lock = NSRecursiveLock()

@@ -13,7 +13,7 @@ extension Injections {
 }
 
 extension Injections {
-    var myServiceType: MyServiceType { MyService() }
+    var myServiceType: MyServiceType { registered(MyService()) }
     var mockServiceType: MyServiceType { MockService() }
 }
 
@@ -27,6 +27,9 @@ extension Injections {
 extension Injections {
     var myConstructedService: MyConstructedService {
         MyConstructedService(service: resolve(\.myServiceType))
+    }
+    var myConstructedService2: MyConstructedService {
+        MyConstructedService(service: myServiceType)
     }
 }
 

@@ -39,7 +39,7 @@ extension Injections {
     var myService: MySimpleService { MySimpleService() }
 }
 ```
-Unlike Resolver which requires a plethora of registration functions, in Injectable you simple define a computed variable on `Injections` that returns an instance of your service. That's it.
+Unlike Resolver which often requires defining a plethora of registration functions, or SwiftUI, where defining a new environment variable requires creating a new EnvironmentKey and adding additional getters and setters, in Injectable the vast majority of all of our injections rely on creating a single computed variable on `Injections` that returns an instance of our service. That's it.
 
 Injecting and using the service where needed is equally straightforward.
 
@@ -51,4 +51,4 @@ class ContentViewModel: ObservableObject {
 ```
 Here our view model uses an `@Injectable` property wrapper to request the desired dependency. Like `@EnvironmentObject` in SwiftUI, you simply provide the property wrapper with a keypath to the desired type and it handles the rest.
 
-And that's the core mechanism. In order to use the property wrapper you *must* provide the keypath. That keypath points to an factory that *must* return the desired type. Fail to do either one and the code will simply not compile. It's compile-time safe.
+And that's the core mechanism. In order to use the property wrapper you *must* provide the keypath. That keypath points to a defined factory that *must* return the desired type. Fail to do either one and the code will simply not compile. As such, Injectable is compile-time safe.
