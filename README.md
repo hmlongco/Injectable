@@ -1,6 +1,12 @@
 # Injectable
 A new approach to Dependency Injection for Swift and SwiftUI.
 
+## WARNING: 
+
+**Injectable is a proof of concept and I'm in the process of revising how it works, how registrations and resolutions occur... pretty much the entire concept**
+
+**As such, this code is provided for instruction and discussion ONLY. It is NOT recommended for production apps at this point in time.**
+
 ## Why do something new?
 
 Resolver was my first Dependency Injection system. While quite powerful and still in use in many of my applications, Resolver suffers from a few drawbacks.
